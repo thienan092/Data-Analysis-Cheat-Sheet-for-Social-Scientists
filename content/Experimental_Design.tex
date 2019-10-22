@@ -1,0 +1,74 @@
+\section{Experimental Design}
+\subsection*{Power Calculations in Practice}
+$\Phi^{-1}(1-\beta)+\frac{\tau}{\sigma'}=\Phi^{-1}(1-\frac{\alpha}{2})$\\
+Therefore,
+$N=\frac{(\Phi^{-1}(\beta)+\Phi^{-1}(1-\frac{\alpha}{2}))^2}{\frac{\tau^2}{\sigma^2}\gamma(1-\gamma)}$\\
+\textit{Code: }
+\begin{spverbatim}
+# Two-sided test
+power=0.95
+level=0.05
+tau=0.5
+lambda=0.5 # the sample-bias ratio N_t/N
+sigma=2
+N = (qnorm(power) + qnorm(1 - level/2))^2/((tau / sigma)^2*lambda*(1 - lambda))
+# or (when tau is large)
+pwr_values = pwr.2p.test(h=tau/sigma, sig.level=level, power=power)
+N = pwr_values$n*2
+\end{spverbatim}
+
+\subsection*{Wald Test}
+(See \textit{\textbf{Two Stage Least Squares}} section)\\
+\textit{\textbf{Note: }Even a "small" violation of either of the conditions for the validity of the instrument can result in very large bias. Any bias in the reduced form will be "blown up" when it's divided by the first stage difference. }
+
+\subsection*{Regression Discontinuity Design}
+\textbf{\textit{Assumption: }}This test will be informative when manipulation of the running variable is monotonic. \\
+\textit{Code: }
+\begin{spverbatim}
+install.packages("rdd")
+library(rdd)
+indiv <- read.csv('indiv_final.csv')
+indiv$above <- as.numeric(indiv$difshare > 0)
+
+dc = DCdensity(indiv$difshare, 0, ext.out=TRUE)
+abline(v=0)
+# The difference in the log estimate in heights at the cutpoint
+dc$theta
+
+#Parametric Regression
+matrix_coef <- matrix(NA, nrow = 2, ncol = 11)
+
+model <- lm(myoutcomenext ~ above, data = indiv, subset = abs(difshare) <= 0.5)
+matrix_coef[1, 1] <- model$coefficients[2]
+pvalue <- summary(model)
+matrix_coef[2, 1] <- pvalue$coefficients[2, 4]
+
+#Non-parametric Regression
+model <- RDestimate(myoutcomenext~difshare, data=indiv, subset = abs(indiv$difshare) <=0.5)
+summary(model)
+plot(model)
+\end{spverbatim}
+
+\subsection*{Two Stage Least Squares}
+\textbf{Endogeneity: }In econometrics, endogeneity broadly refers to situations in which an explanatory variable is correlated with the error term. 
+\begin{itemize}
+    \item \textit{Expression: }Unable to control an explanatory variable properly. 
+    \item \textit{Reasons: }Endogeneity can be OVB, reverse causality and measurement error. 
+\end{itemize}
+\textbf{Assumption: }Exclusion Restriction. \\
+\textbf{Note: }Must have at least as many instruments as you have endogenous explanatory variables (this is referred to as the "rank condition"). \\
+\textit{Code: }
+\begin{spverbatim}
+iva1 <- ivreg(workedm ~ three + blackm + hispm + othracem |
+                blackm + hispm + othracem + multiple, data = census80)
+IVa[1, 1] <- iva$coefficients[2]
+pvalue <- summary(iva1)
+IVa[2, 1] <- pvalue$coefficients[2, 4]
+\end{spverbatim}
+
+\subsection*{Phase-in Design}
+\begin{itemize}
+    \item Choose target individuals or communities to be covered over several years
+    \item Randomize the order in which they are phased in
+    \item Those not yet phased in are the comparison
+\end{itemize}

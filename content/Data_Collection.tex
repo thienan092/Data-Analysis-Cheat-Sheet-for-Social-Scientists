@@ -1,0 +1,44 @@
+\section{Gathering and Collecting Data}
+\subsection*{Tools}
+https://toolbox.google.com/datasetsearch
+\subsection*{Human Subjects in Research}
+Why? $\rightarrowtail$ Tuskegee Syphilis trials. \\
+Reaction: 
+\begin{enumerate}
+    \item HHS Regulations for the Protection of Human Subjects at Title 45 Code of Federal Regulations Part 46. 
+    \item Belmont report (designed for biomedical research). 
+\end{enumerate}
+\textbf{Principles of Belmont report: }
+\begin{enumerate}
+   \item Respect for Persons
+   \begin{itemize}
+     \item Informed consent (subjects must be known aboout the purpose of the experiment)
+     \item Protecting privacy and maintaining confidentiality
+     \item Additional safeguards for protection of subjects likely to be vulnerable to coercion or undue influence
+   \end{itemize}
+   \item Beneficence
+   \begin{itemize}
+     \item Assessment of risk/benefit analysis including study design
+     \item Ensure that risks to subjects are minimized
+     \item Risk justified by benefits of the research
+   \end{itemize}
+   \item Justice
+   \begin{itemize}
+     \item Ensure that selection of subjects is equitable
+   \end{itemize}
+\end{enumerate}
+\textit{Code: }
+\begin{spverbatim}
+# library(tibble)
+# library(tidyverse)
+successes <- rbinom(1000,8,0.2)
+data <- as_tibble(data.frame(successes))
+
+bin_data <- data %>% group_by(successes) %>% 
+  summarise(n=n()) %>% 
+  mutate(freq=n/sum(n))
+  
+cdf_data <- data %>% group_by(successes) %>% 
+  summarise(n=n()) %>% arrange(desc(successes)) %>% 
+  mutate(freq=n/cumsum(n))
+\end{spverbatim}

@@ -1,0 +1,32 @@
+\section{Causality and Non-parametric Regression}
+\subsection*{Rubin Causal Model}
+For any unit, the causal effect of a treatment is the difference between the potential outcome with and without the treatment. \\
+$\rightarrowtail$ Need to define treatment effects for each possibility. \\
+Because that at most one of the potential outcomes can be observed, some assumptions are neccesary: 
+\subsection*{SUTVA (Stable Unit Treatment Value Assumption)}
+\textbf{\textit{Assumption: }}The potential outcome for any unit do not vary with the treatments assigned to other units and, for each unit, there are no different forms or versions of each treatment unit leading to different outcomes. 
+\subsection*{Kernel Regression}
+\textbf{\textit{Formula: }} \\
+$\hat{f}_h(x) = \frac{1}{n} \sum_{i=1}^{n} K_h(x-x_i) = \frac{1}{nh}\sum_{i=1}^{n} K(\frac{x-x_i}{h})$ \\
+\textit{Code: }
+\begin{spverbatim}
+#Preliminaries
+rm(list=ls())
+library(perm) # chooseMatrix()
+library(np)
+setwd("E:/")
+schools <- read.csv("teachers_final.csv")
+attach(schools)
+bw_a <-npreg(xdat=pctpostwritten, ydat= open, bws=0.04,bandwidth.compute=FALSE)
+plot(bw_a)
+
+
+treat <- schools$pctpostwritten[treatment==1]
+cont <- schools$pctpostwritten[treatment==0]
+
+ks.test(treat, cont, "greater")
+
+schools$group[schools$treatment==1] <-"T"
+schools$group[schools$treatment==0] <-"C"
+ggplot(schools, aes(pctpostwritten,colour = group)) + stat_ecdf()
+\end{spverbatim}

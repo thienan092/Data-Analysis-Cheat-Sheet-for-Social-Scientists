@@ -1,0 +1,151 @@
+\section{Confidence Intervals}
+
+Let $\displaystyle ( E,(\mathbb{P}_{\theta })_{\theta \in \Theta })$ be a statistical  model based on observations $X_{1} , \ldots X_{n}$  and assume $\displaystyle \Theta \subseteq \mathbb{R}$. Let $\displaystyle \alpha \in ( 0,1)$.\\
+
+\textbf{Non asymptotic} confidence interval of level $\displaystyle 1-\alpha $ for $\displaystyle \theta $:\\
+
+Any random interval $\displaystyle \mathcal{I}$, depending on the sample $X_{1} , \ldots X_{n}$ but not at $\displaystyle \theta $ and such that:\\
+
+$\mathbb{P}_{\theta }[\mathcal{I} \ni \theta ] \geq 1-\alpha ,\ \ \forall \theta \in \Theta$\\
+
+Confidence interval of \textbf{asymptotic level} $\displaystyle 1-\alpha $  for $\displaystyle \theta $:\\
+
+Any random interval $\displaystyle \mathcal{I}$ whose boundaries do not depend on $\displaystyle \theta $ and such that:\\
+
+$\lim _{n\rightarrow \infty }\mathbb{P}_{\theta } [\mathcal{I} \ni \theta ]\geq 1-\alpha ,\ \ \forall \theta \in \Theta $\\
+
+\subsection*{Two-sided asymptotic CI}
+Let $X_1, \ldots, X_n = \tilde{X}$ and $\tilde{X}\stackrel{iid} {\sim} P_{\theta}$. A two-sided CI is a function depending on $\tilde{X}$ giving an upper and lower bound in which the estimated parameter lies $\mathcal{I} = [l(\tilde{X},u(\tilde{X})]$ with a certain probability $\mathbb{P}(\theta \in  \mathcal{I}) \geq 1 -q_{\alpha}$ and conversely $\mathbb{P}(\theta \not\in  \mathcal{I}) \leq \alpha$\\
+
+Since the estimator is a r.v. depending on $\tilde{X}$ it has a variance $Var(\hat{\theta}_n$ and a mean $\mathbb{E}[\hat{\theta}_n]$. After finding those it is possible to standardize the estimator using the CLT. This yields an asymptotic CI: $\mathcal{I} = \hat{\theta}_n + [\frac{-q_{\alpha /2} \sqrt{Var(\theta)} }{\sqrt{n}}, \frac{q_{\alpha /2} \sqrt{Var(\theta)} }{\sqrt{n}}]$
+
+This expression depends on the real variance $Var(\theta)$ of the r.vs, the variance has to be estimated. Three possible methods: plugin (use sample mean), solve (solve quadratic inequality), conservative (use the maximum of the variance).\\
+
+\subsection*{Delta Method}
+
+If I take a function of the mean and want to make it converge to a function of the mean. 
+
+$\sqrt{n}(g(\widehat{m}_1) - g(m_1(\theta ))) \xrightarrow [n \to \infty ]{(d)} \mathcal{N}(0, g'(m_1(\theta ))^2 \sigma ^2)$
+
+
+\section{Hypothesis Testing}
+\subsection*{Comparisons of two proportions}
+
+Let $X_1,\dots ,X_ n \stackrel{iid}{\sim} Bern(p_x)$ and  $Y_1,\dots ,Y_ n \stackrel{iid}{\sim} Bern(p_y)$ and be $X$ independent of $Y$. $\hat{p}_x= 1/n \sum_{i=1}^{n} X_i$ and $\hat{p}_x= 1/n \sum_{i=1}^{n} Y_i$\\
+
+$H_0: p_x = p_y; H_1: p_x \neq p_y$
+
+To get the asymptotic Variance use multivariate Delta-method. Consider $\hat{p}_x - \hat{p}_y = g(\hat{p}_x,\hat{p}_y); g(x,y)= x -y$, then
+
+$\sqrt(n) (g(\hat{p}_x,\hat{p}_y) - g(p_x-p_y)) \xrightarrow[n \rightarrow \infty]{(d)} N(0,\nabla g(p_x-p_y)^T \Sigma \nabla g(p_x-p_y))$\\ 
+
+$\Rightarrow N(0,p_x(1-px) + p_y(1-py))$
+
+Pivot:\\
+
+Let $X_1,\dots ,X_ n$ be random samples and let $T_ n$  be a function of $X$ and a parameter vector $\theta$. That is, $T_n$ is a function of $X_1,\dots ,X_ n,\theta$. Let $g(T_ n)$ be a random variable whose distribution is the same for all $\theta$ . Then, $g$ is called a pivotal quantity or a pivot.\\
+
+For example, let $X$ be a random variable with mean $\mu$ and variance $\sigma^2$ . Let $X_1,\dots ,X_ n$ be iid samples of $X$. Then,
+
+$$\displaystyle  g_ n \triangleq \frac{\overline{X_ n} - \mu }{\sigma }$$
+ 		 	 
+is a pivot with $\theta = \left[\mu ~ ~  \sigma ^2\right]^ T$ being the parameter vector. The notion of a parameter vector here is not to be confused with the set of paramaters that we use to define a statistical model. 			 
+\subsection{KS Test}
+\textit{Code: }
+\begin{spverbatim}
+x=sort(c(.28,.2,.01,.8,.1))
+n=length(x)
+mu=mean(x)
+sigma=sd(x)
+y=pnorm((x - mu)/sigma)
+ids1=seq(1,n,1)/n
+ids2=rep(0,n)
+ids2[-1]=ids1[-n]
+T_n = max(cbind(abs(y - ids1),abs(y - ids2)))*sqrt(n)
+T_table = T_n/sqrt(n)
+T_table
+\end{spverbatim}
+
+\subsection{Walds Test and Log Test}
+$\, X_1, \ldots , X_ n \stackrel{iid}{\sim } \mathbf{P}_{\theta ^*}$  for some true parameter $\theta ^* \in \mathbb {R}^ d$. We construct the associated statistical model $(\mathbb {R}, \{  \mathbf{P}_\theta \} _{\theta \in \mathbb {R}^ d } )$ and the maximum likelihood estimator $\widehat{\theta }_ n^{MLE}$ for $\theta ^*$.
+
+Decide between two hypotheses:
+
+$H_0: \displaystyle  \theta ^* = \mathbf{0}$ VS $H_1: \displaystyle  \theta ^* \neq \mathbf{0}$
+
+Assuming that the null hypothesis is true, the asymptotic normality of the MLE $\widehat{\theta }_ n^{MLE}\,$ implies that the following random variable $\left\lVert \sqrt{n}\, \mathcal{I}(\mathbf{0})^{1/2}(\widehat{\theta }_ n^{MLE}- \mathbf{0}) \right\rVert ^2$ converges to a $\chi ^2_ k$ distribution.\\
+
+$\left\lVert \sqrt{n}\, \mathcal{I}(\mathbf{0})^{1/2}(\widehat{\theta }_ n^{MLE}- \mathbf{0}) \right\rVert ^2 \xrightarrow [n\to \infty ]{(d)} \chi ^2_ d\,$\\
+
+Wald's Test in 1 dimension:\\
+
+In 1 dimension, Wald's Test coincides with the two-sided test based on on the asymptotic normality of the MLE.
+
+Given the hypotheses
+
+$H_0: \displaystyle  \theta ^* = \mathbf{0}$ VS $H_1: \displaystyle  \theta ^* \neq \mathbf{0}$	 	 
+ 	 		 	 
+a two-sided test of level $\alpha$, based on the asymptotic normality of the MLE, is $\displaystyle  \displaystyle \psi _\alpha =\mathbf{1}\left(\sqrt{nI(\theta _0)} \left| \widehat{\theta }^{\text {MLE}} -\theta _0 \right|>q_{\alpha /2}(\mathcal{N}(0,1))\right)$
+
+ 		 	 
+where the Fisher information $\, I(\theta _0)^{-1}\,$ is the asymptotic variance of $\, \widehat{\theta }^{\text {MLE}}\,$ under the null hypothesis.
+
+On the other hand, a Wald's test of level $\alpha$ is
+
+$\displaystyle  \displaystyle \psi ^{\text {Wald}}_\alpha	= \displaystyle \mathbf{1}\left(nI(\theta _0) \left(\widehat{\theta }^{\text {MLE}} -\theta _0\right)^2\, >\, q_{\alpha }(\chi ^2_1)\right) = \displaystyle \mathbf{1}\left(\sqrt{nI(\theta _0)} \, \left| \widehat{\theta }^{\text {MLE}} -\theta _0 \right|\, >\, \sqrt{q_{\alpha }(\chi ^2_1)}\right).$			 	 
+ 
+\textit{Code: }
+\begin{spverbatim}
+# pdf: lambda*e^(-lambda)
+# H0: lambda = 1; H1: otherwise
+# MLE estimate: 100/120 = n/Sigma
+# Wald test
+1 - pchisq(100*((100/120 - 1)^2)/((100/120)^2),df=1)
+# Log test. 
+# This test is less conservative than the Wald test
+1 - pchisq(((100*log(100/120)+(-(100/120)*120)) - (100*log(1)+(-(1)*120)))*2,df=1)
+\end{spverbatim}
+
+\subsection{Welch T-test}
+\textit{Code: }
+\begin{spverbatim}
+samplesA = c(1,3)
+samplesB = c(3,3,2)
+n=length(samplesA)
+m=length(samplesB)
+meanA = mean(samplesA)
+meanB = mean(samplesB)
+varA = var(samplesA)
+varB = var(samplesB)
+N = (varA/n + varB/m)^2/(varA^2/n^2/(n - 1)+varB^2/m^2/(m - 1))
+T_N = (meanA - meanB)/sqrt(varA/n + varB/m)
+p_value = 1 - pt(T_N, df=N)
+p_value
+\end{spverbatim}
+
+\subsection{ANOVA}
+\textit{Memic: } If $X \sim \chi_n^2$ and $Z \sim \chi_m^2$ and they're independent, then\\
+$\frac{X/n}{Z/m} \sim F_{n,m}$\\
+\textit{Code: }
+\begin{spverbatim}
+library(car)
+model <- lm(GDP ~ FHouse_sq + FHouse, demo)
+summary(model)
+anova_rest <- anova(model)
+
+#Test
+statistic_test <- (((anova_rest$`Sum Sq`[2]-anova_unrest$`Sum Sq`[3])/(anova_unrest$Df[2]))
+                   /((anova_unrest$`Sum Sq`[3])/anova_unrest$Df[3]))
+statistic_test
+pvalue <- df(statistic_test, 1, anova_unrest$Df[3])
+pvalue
+
+matrixR <- c(0, -1, 1)
+linearHypothesis(model, matrixR)
+
+# or 
+# fitTL <- lm(friction ~ type + leg, data=spider)
+# library(contrast) #Available from CRAN
+# L3vsL2 <- contrast(fitTL, list(leg="L3", type="pull"), list(leg="L2", type="pull"))
+# L3vsL2
+\end{spverbatim}

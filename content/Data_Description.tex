@@ -1,0 +1,35 @@
+\section{Describling Data}
+\textit{Code: }
+\begin{spverbatim}
+#Preliminaries
+rm(list=ls())
+library("tidyverse")
+
+setwd("E:/")
+
+#Getting the data
+gender_data <- as_tibble( read.csv( "Gender_StatsData.csv" ) )
+head(gender_data)
+
+teenager_fr <- gender_data %>% filter(Indicator.Code == "SP.ADO.TFRT")
+byincomelevel <- filter(teenager_fr, Country.Code%in%c("LIC","MIC") | Country.Code%in%c("HIC"))
+plotdata_bygroupyear <- gather(byincomelevel, Year, FertilityRate, X1960:X2015) %>% 
+  select(Year, ï..Country.Name, Country.Code, FertilityRate)
+plotdata_byyear <- plotdata_bygroupyear
+# drops = "Country.Name"
+# plotdata_byyear = dummy.data.frame(plotdata_byyear, "Country.Name", sep=".")
+# plotdata_byyear = plotdata_byyear[, !(colnames(plotdata_byyear) %in% drops)]
+plotdata_byyear <- plotdata_byyear %>% select(Year, Country.Code, FertilityRate) %>% 
+  spread(Country.Code, FertilityRate)
+
+rm(gender_data)
+
+every_nth = function(n) {
+  return(function(x) {x[c(TRUE, rep(FALSE, n - 1))]})
+}
+p = ggplot(plotdata_bygroupyear, aes(x=Year, y=FertilityRate, group=Country.Code, col=Country.Code))
+p = p + scale_x_discrete(breaks = every_nth(n=5))
+p = p + theme(axis.text.x = element_text(angle = 90))
+p = p + geom_line()
+p
+\end{spverbatim}

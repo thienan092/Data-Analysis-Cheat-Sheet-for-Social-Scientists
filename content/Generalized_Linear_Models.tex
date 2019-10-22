@@ -1,0 +1,79 @@
+\section{Generalized Linear Models}
+We relax the assumption that $\mu$ is linear. Instead, we assume that g $\circ \mu$ is linear, for some function $g$:\\
+
+$g(\mu (\mathbf x)) = \mathbf x^ T \beta$
+
+The function $g$ is assumed to be known, and is referred to as the link function. It maps the domain of the dependent variable to the entire real Line.
+
+it has to be strictly increasing,
+
+it has to be continuously differentiable and
+
+its range is all of $\mathbb{R}$
+
+\subsection{Multivariate Linear Regression}
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\Setup: Y = X%*%Beta + e
+\\Modeling Assumptions in Linear Regression:
+\\1. Linear Relationship. 
+\\2. X ~ Normal, e_i ~(idd) Normal(mu=0, sigma^2)
+\\3. E[e_i*e_j] = 0, E[X*e_j] = 0
+\\Beta_hat ~ Normal(Beta, sigma^2*solve(trans(X)%*%X))
+\\sigma_hat^2 = trans(Y - X%*%Beta_hat)%*%(Y - X%*%Beta_hat)/(n - p)
+\end{simplebsl}
+
+\subsection{Theorems for Hypothesis Testing:}
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\1. n*pop_var/sigma^2 ~ Chi-square(n - p)
+\\2. Cochran's theorem. 
+\end{simplebsl}
+
+\subsection{T Test:}
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\T_n = trans(u)
+\\%*%(Beta_hat - Beta)
+\\/sigma_hat
+\\*sqrt(trans(u)%*%solve(trans(X)%*%X)%*%u)
+\\T_n ~ T(n-p)
+\end{simplebsl}
+
+\subsection{Canonical Exponential Family:}
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\f_theta(y) = e^((y*theta-b(theta))/phi + c(y,phi)) Given phi is known. 
+\\nabla_Beta\{b(X_i%*%Beta)\} = trans(X_i)%*%b'(X_i%*%Beta)
+\\For MLE: trans(X)%*%Y = trans(X)%*%b'(X%*%Beta) => (Normal dist.) Beta = solve(trans(X)%*%X)%*%trans(X)%*%Y
+\\E[Y] = mu = b'(theta) => Canonical Link: \{b'\}^\{-1\}(mu) = theta = X%*%Beta
+\\Var(Y) = b''(theta)*phi (don't need to use this in practice)
+\end{simplebsl}
+
+\subsection{Properties:}
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\1. Canonical link function is strictly increasing. 
+\\2. The log-likelihood l(theta) is strictly concave when phi > 0. 
+\\Common Canonical Links (g(mu)): 
+\\Norm | mu             | theta^2/2       >> (b(theta))
+\\Pois | log(mu)        | e^theta
+\\Bern | log(mu/(1-mu)) | log(1+e^theta)
+\\Gamm | -1/mu          | -log(-theta)
+\end{simplebsl}
+
+\subsection{The Exponential Family}
+
+A family of distribution $\, \{ \mathbf{P}_{{\boldsymbol \theta }}: {\boldsymbol \theta }\in \Theta \} ,\,$  where the parameter space $\Theta \subset \mathbb {R}^ k\,$ is -$k$ dimensional, is called a $k$-parameter exponential family on $\mathbb{R}^1$ if the pmf or pdf $\, f_{\boldsymbol \theta }:\mathbb {R}^ q\to \mathbb {R}\,$ of $\, \mathbf{P}_{{\boldsymbol \theta }}\,$ can be written in the form:\\
+
+$\displaystyle  \displaystyle f_{\boldsymbol \theta }(\mathbf{y})=h(\mathbf{y})\, \exp \left({\boldsymbol \eta }({\boldsymbol \theta })\cdot \mathbf{T}(\mathbf{y})-B({\boldsymbol \theta })\right)\qquad \text {where } \\ \begin{cases}  {\boldsymbol \eta }({\boldsymbol \theta })=\begin{pmatrix} \eta _1({\boldsymbol \theta }) \hdots \eta _ k({\boldsymbol \theta })\end{pmatrix}& :\mathbb {R}^ t\to \mathbb {R}^{1 \times k} \\ \mathbf{T}(\mathbf{y})=\begin{pmatrix} T_1(\mathbf{y})\\ \vdots \\ T_ k(\mathbf{y})\end{pmatrix}& :\mathbb {R}^ q\to \mathbb {R}^{k \times 1} \\ B({\boldsymbol \theta })& :\mathbb {R}^ t\to \mathbb {R}\\ h(\mathbf{y})& :\mathbb {R}^ q\to \mathbb {R}.\\ \end{cases}$\\
+
+
+if $k=1$ it reduces to:\\
+
+$\displaystyle  \displaystyle f_\theta (y)=h(y)\, \exp \left(\eta (\theta ) T(y)-B(\theta )\right)$ \\
+\textbf{\textit{[R]}}
+\begin{simplebsl}
+\\f_theta(y) = h(y)*e^(eta(theta)%*%T(y)-B(theta))
+\\Ex. 1/gamma(a)*(a/mu)^a*y^(a-1)*e^(-a*y/mu) = 1/gamma(a)*(a/mu)^a*e^((a-1)*ln(y)-a*y/mu): eta(theta)=[a-1, -a/mu] | T(y)=[ln(y), y]' | B(theta)=-1/gamma(a)*(a/mu)^a | h(y)=1
+\end{simplebsl}

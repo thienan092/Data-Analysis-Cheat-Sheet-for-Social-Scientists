@@ -1,0 +1,31 @@
+\section{Basic Simulation}
+If $F(y)$ is a monotic function and $X \sim \mathcal{U}[0, 1]$ then,\\
+$Y = F^{-1}(X)$ has PDF is $F(y)$
+\section{Basic Visualization}
+\textit{Code: }
+\begin{spverbatim}
+#scatter, regression, and sample mean plot
+p <- ggplot()
+p <- p+geom_point(data=demo, aes(x=FHouse, y=GDP), color="purple")
+p <- p+geom_smooth(data=demo, method="lm", aes(x=FHouse, y=GDP))
+p <- p+geom_point(data=meanGDP, aes(x=FHouse,y=GDPmean), color="orange")
+p
+
+# or
+# ggplot(dat, aes(x=head_edu )) + geom_density(data=subset(dat, treat_invite==0), fill = "red", alpha=0.2) + geom_density(data=subset(dat, treat_invite==1), fill = "blue", alpha=0.2)
+# ggplot(dat, aes(x=mosques )) + geom_density(data=subset(dat, treat_invite==0), fill = "red", alpha=0.2) + geom_density(data=subset(dat, treat_invite==1), fill = "blue", alpha=0.2)
+# ggplot(dat, aes(x=pct_poor )) + geom_density(data=subset(dat, treat_invite==0), fill = "red", alpha=0.2) + geom_density(data=subset(dat, treat_invite==1), fill = "blue", alpha=0.2)
+# ggplot(dat, aes(x=total_budget )) + geom_density(data=subset(dat, treat_invite==0), fill = "red", alpha=0.2) + geom_density(data=subset(dat, treat_invite==1), fill = "blue", alpha=0.2)
+\end{spverbatim}
+\section{Basic Regression}
+\textit{Code: }
+\begin{spverbatim}
+#simple linear regression
+single <- lm(lwage ~ yrs_school, data = nlsw88)
+summary(single) # show results
+coefficients(single) # model coefficients
+ci <- confint(single, level=0.9) 
+ci
+resid <- residuals(single) # residuals
+sum(resid)
+\end{spverbatim}
